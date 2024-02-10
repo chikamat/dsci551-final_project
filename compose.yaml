@@ -1,4 +1,18 @@
 services:
+  mdb0:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: mngdb0
+        target: /data/db
+    container_name: mongodb0
+    networks:
+      - backend
   back:
     build: ./fastapi
     ports:
@@ -6,6 +20,11 @@ services:
     volumes:
       - ./fastapi/app:/code/app
     container_name: fastapi
+    depends_on:
+      - mdb0
+    networks:
+      - frontend
+      - backend
   front:
     build: ./streamlit
     ports:
@@ -13,3 +32,12 @@ services:
     volumes:
       - ./streamlit:/app
     container_name: streamlit
+    depends_on:
+      - back
+    networks:
+      - frontend
+volumes:
+  mngdb0:
+networks:
+  frontend:
+  backend:
