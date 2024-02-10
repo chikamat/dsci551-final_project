@@ -1,7 +1,15 @@
 services:
+  back:
+    build: ./fastapi
+    ports:
+      - "80:80"
+    volumes:
+      - ./fastapi/app:/code/app
+    container_name: fastapi
   front:
     build: ./streamlit
     ports:
       - "8501:8501"
     volumes:
       - ./streamlit:/app
+    container_name: streamlit
