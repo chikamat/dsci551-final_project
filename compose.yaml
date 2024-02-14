@@ -1,9 +1,8 @@
 services:
   mdb0:
     image: mongodb/mongodb-community-server:6.0-ubi8
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=pass
+    env_file:
+      - ./env/mongodb0.env
     ports:
       - "27017:27017"
     volumes:
@@ -15,6 +14,8 @@ services:
       - backend
   back:
     build: ./fastapi
+    env_file:
+      - ./env/fastapi.env
     ports:
       - "80:80"
     volumes:

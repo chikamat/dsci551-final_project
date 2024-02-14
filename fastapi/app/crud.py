@@ -1,6 +1,6 @@
 from fastapi.encoders import jsonable_encoder
 from typing import List
-from schema import Farmer, FarmerUpdate
+from app.schema import Farmer, FarmerUpdate
 
 
 def create_farmer_db(database, farmer: Farmer):

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from typing import List
-from schema import Farmer, FarmerUpdate
-from crud import (create_farmer_db, list_farmers_db, find_farmer_db,
+from app.schema import Farmer, FarmerUpdate
+from app.crud import (create_farmer_db, list_farmers_db, find_farmer_db,
                               update_farmer_db, delete_farmer_db)
 
 router = APIRouter()
