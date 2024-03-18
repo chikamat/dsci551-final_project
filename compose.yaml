@@ -12,6 +12,19 @@ services:
     container_name: mongodb0
     networks:
       - backend
+  mdb1:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    env_file:
+      - ./env/mongodb1.env
+    ports:
+      - "27018:27017"
+    volumes:
+      - type: volume
+        source: mngdb1
+        target: /data/db
+    container_name: mongodb1
+    networks:
+      - backend
   back:
     build: ./fastapi
     env_file:
@@ -39,6 +52,7 @@ services:
       - frontend
 volumes:
   mngdb0:
+  mngdb1:
 networks:
   frontend:
   backend:
