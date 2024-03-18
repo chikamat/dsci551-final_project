@@ -9,8 +9,10 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startup_db_client():
-    app.mongodb_client = MongoClient(os.getenv("MDB0_URI"))
-    app.database = app.mongodb_client[os.getenv("DB_NAME")]
+    app.mongodb0_client = MongoClient(os.getenv("MDB0_URI"))
+    app.mongodb1_client = MongoClient(os.getenv("MDB1_URI"))
+    app.database0 = app.mongodb0_client[os.getenv("DB_NAME")]
+    app.database1 = app.mongodb1_client[os.getenv("DB_NAME")]
     print("Connected to the MongoDB database!")
 
 
