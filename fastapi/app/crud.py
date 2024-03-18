@@ -7,6 +7,13 @@ def hash_name(name):
     return sum(map(ord, name)) % 2
 
 
+def find_database_with_farmer(database_list, id: str):
+    for db in database_list:
+        if db["farmers"].find_one({"_id": id}):
+            return db
+    return None
+
+
 def create_farmer_db(database_list, farmer: Farmer):
     database = database_list[hash_name(farmer.dict().get('name'))]
     farmer = jsonable_encoder(farmer)
@@ -19,28 +26,24 @@ def list_farmers_db(database_list) -> List[Farmer]:
 
 
 def find_farmer_db(database_list, id: str) -> Farmer:
-    if database_list[0]["farmers"].find_one({"_id": id}) is None:
-        return database_list[1]["farmers"].find_one({"_id": id})
-    else:
-        return database_list[0]["farmers"].find_one({"_id": id})
+    for db in database_list:
+        farmer = db["farmers"].find_one({"_id": id})
+        if farmer:
+            return farmer
+    return None
 
 
 def update_farmer_db(database_list, id: str, farmer: FarmerUpdate):
-    farmer = {k: v for k, v in farmer.dict().items() if v is not None}
-    if database_list[0]["farmers"].find_one({"_id": id}) is not None:
-        database_list[0]["farmers"].update_one({"_id": id}, {"$set": farmer})
-        return database_list[0]["farmers"].find_one({"_id": id})
-    elif database_list[1]["farmers"].find_one({"_id": id}) is not None:
-        database_list[1]["farmers"].update_one({"_id": id}, {"$set": farmer})
-        return database_list[1]["farmers"].find_one({"_id": id})
-    else:
+    db = find_database_with_farmer(database_list, id)
+    if db is None:
         return None
+    update_data = {k: v for k, v in farmer.dict().items() if v is not None}
+    db["farmers"].update_one({"_id": id}, {"$set": update_data})
+    return db["farmers"].find_one({"_id": id})
 
 
 def delete_farmer_db(database_list, id: str):
-    if database_list[0]["farmers"].find_one({"_id": id}) is not None:
-        return database_list[0]["farmers"].delete_one({"_id": id}).deleted_count
-    elif database_list[1]["farmers"].find_one({"_id": id}) is not None:
-        return database_list[1]["farmers"].delete_one({"_id": id}).deleted_count
-    else:
+    db = find_database_with_farmer(database_list, id)
+    if db is None:
         return 0
+    return db["farmers"].delete_one({"_id": id}).deleted_count

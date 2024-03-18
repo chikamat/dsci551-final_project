@@ -1,7 +1,7 @@
 from typing import Union
 from fastapi import FastAPI
 from pymongo import MongoClient
-from app.routes import router as farmer_router
+from app.routes_farmer import router as farmer_router
 import os
 
 app = FastAPI()
