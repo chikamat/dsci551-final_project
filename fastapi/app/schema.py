@@ -4,9 +4,13 @@ from pydantic import BaseModel, Field
 
 
 class Product(BaseModel):
-    inventory: int
-    price: float
-    rating: float
+    inventory: Optional[int]
+    price: Optional[float]
+    rating: Optional[float]
+    review_count: int = 0
+
+    class Config:
+        extra = "forbid"
 
 
 class Farmer(BaseModel):
@@ -17,6 +21,7 @@ class Farmer(BaseModel):
     product_list: Optional[Dict[str, Product]]
 
     class Config:
+        extra = "forbid"
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
@@ -37,6 +42,7 @@ class FarmerUpdate(BaseModel):
     product_list: Optional[Dict[str, Product]]
 
     class Config:
+        extra = "forbid"
         schema_extra = {
             "example": {
                 "contact": "XXX-YYY-ZZZZ",

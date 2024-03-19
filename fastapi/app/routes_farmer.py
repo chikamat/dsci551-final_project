@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from typing import List
 from app.schema import Farmer, FarmerUpdate
 from app.crud import (create_farmer_db, list_farmers_db, find_farmer_db,
-                              update_farmer_db, delete_farmer_db)
+                              update_farmer_db, delete_farmer_db, delete_product_db)
 
 router = APIRouter()
 
@@ -26,7 +26,7 @@ def find_farmer(id: str, request: Request):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Farmer with ID {id} not found")
 
 
-@router.put("/{id}", response_description="Update a farmer", response_model=Farmer)
+@router.patch("/{id}", response_description="Update a farmer", response_model=Farmer)
 def update_farmer(id: str, request: Request, farmer: FarmerUpdate = Body(...)):
     existing_farmer = update_farmer_db([request.app.database0, request.app.database1], id, farmer)
     if existing_farmer is not None:
@@ -41,3 +41,12 @@ def delete_farmer(id: str, request: Request, response: Response):
         response.status_code = status.HTTP_204_NO_CONTENT
         return
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Farmer with ID {id} not found")
+
+
+@router.delete("/{id}/product_list/{product_name}", response_description="Remove a product from a farmer")
+def delete_product(id: str, product_name: str, request: Request, response: Response):
+    deleted_count = delete_product_db([request.app.database0, request.app.database1], id, product_name)
+    if deleted_count == 1:
+        response.status_code = status.HTTP_204_NO_CONTENT
+        return
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product {product_name} with ID {id} not found")
