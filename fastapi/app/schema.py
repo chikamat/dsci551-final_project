@@ -52,3 +52,27 @@ class FarmerUpdate(BaseModel):
                 }
             }
         }
+
+
+class Purchase(BaseModel):
+    quantity: int = Field(...)
+
+    class Config:
+        extra = "forbid"
+        schema_extra = {
+            "example": {
+                "quantity": 2,
+            }
+        }
+
+
+class Review(BaseModel):
+    rating: float = Field(...)
+
+    class Config:
+        extra = "forbid"
+        schema_extra = {
+            "example": {
+                "rating": 3.5,
+            }
+        }

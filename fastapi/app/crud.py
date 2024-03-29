@@ -1,6 +1,6 @@
 from fastapi.encoders import jsonable_encoder
 from typing import List
-from app.schema import Farmer, FarmerUpdate
+from app.schema import Farmer, FarmerUpdate, Purchase, Review
 
 
 def hash_name(name):
@@ -65,3 +65,39 @@ def delete_product_db(database_list, id: str, product_name: str):
         {"$unset": {f"product_list.{product_name}": ""}}
     )
     return update_result.modified_count
+
+
+def list_farmers_by_product_db(database_list, product_name: str) -> List[Farmer]:
+    pipeline = [
+        {"$match": {f"product_list.{product_name}": {"$exists": "true"}}},
+        {"$project": {"name": 1, "contact": 1, "location": 1, f"product_list.{product_name}": 1}}
+    ]
+    return list(database_list[0]["farmers"].aggregate(pipeline)) + list(database_list[1]["farmers"].aggregate(pipeline))
+
+
+def purchase_product_db(database_list, id: str, product_name: str, purchase: Purchase):
+    db = find_database_with_farmer(database_list, id)
+    if db is None:
+        return None
+    key = f"product_list.{product_name}.inventory"
+    current_inventory = db["farmers"].find_one({"_id": id}, {"inventory": "$" + key})
+    new_inventory = current_inventory.get("inventory") - purchase.dict().get("quantity")
+    db["farmers"].update_one({"_id": id}, {"$set": {key: new_inventory}})
+    return db["farmers"].find_one({"_id": id}, {"name": 1, "contact": 1, "location": 1, f"product_list.{product_name}": 1})
+
+
+def review_product_db(database_list, id: str, product_name: str, review: Review):
+    db = find_database_with_farmer(database_list, id)
+    if db is None:
+        return None
+    key = f"product_list.{product_name}"
+    current_review_count = db["farmers"].find_one({"_id": id}, {"review_count": "$" + key + ".review_count"}).get("review_count")
+    current_rating = db["farmers"].find_one({"_id": id}, {"rating": "$" + key + ".rating"}).get("rating")
+    new_review_count = current_review_count + 1
+    if current_review_count == 0:
+        new_rating = review.dict().get("rating")
+    else:
+        new_rating = (current_rating * current_review_count + review.dict().get("rating")) / new_review_count
+    db["farmers"].update_one({"_id": id}, {"$set": {key + ".rating": new_rating}})
+    db["farmers"].update_one({"_id": id}, {"$set": {key + ".review_count": new_review_count}})
+    return db["farmers"].find_one({"_id": id}, {"name": 1, "contact": 1, "location": 1, f"product_list.{product_name}": 1})

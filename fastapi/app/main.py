@@ -2,6 +2,7 @@ from typing import Union
 from fastapi import FastAPI
 from pymongo import MongoClient
 from app.routes_farmer import router as farmer_router
+from app.routes_user import router as user_router
 import os
 
 app = FastAPI()
@@ -22,13 +23,4 @@ def shutdown_db_client():
 
 
 app.include_router(farmer_router, tags=["farmers"], prefix="/farmer")
-
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+app.include_router(user_router, tags=["users"], prefix="/user")
