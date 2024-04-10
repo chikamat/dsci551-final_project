@@ -1,29 +1,72 @@
-# dsci551-final_project
+# Local Food Exchange Network Application
 
----
+## Overview
 
-# Backend - FastAPI Directory Structure
+The Local Food Exchange Network is a web-based application designed to connect local farmers with customers to facilitate the discovery and purchase of locally sourced food products. Developed as part of the DSCI551 Spring 2024 coursework at USC, this project implements a distributed database that stores data across two NoSQL systems, managed by a hash function.
 
-This section outlines the structure of the `fastapi/app` folder, including a description of each file and directory and their respective roles within the project.
+## Getting Started
 
-## Directory Layout
+### Prerequisites
+- Docker Desktop must have been installed and run previously (Please refer to https://docs.docker.com/desktop/install/mac-install/).
+  Windows users need to install Linux distribution by using WSL as well (Please refer to https://learn.microsoft.com/ja-jp/windows/wsl/install).
+  In addition, Windows users need to have docker enable integration with the Linux distribution (Please check Settings/Resources/WSL integration on your Docker Desktop).
+  Windows users will execute Docker commands in your Linux distribution terminal. Mac users will execute Docker commands in your terminal.
 
-```
-app/
-├── main.py
-├── schema.py
-├── routes.py
-└── crud.py
-```
+### Installation and Setup
+1. Clone this repository to your local machine.
+2. Navigate to the project directory in your terminal.
+3. Execute the following command to start the application:
 
-### Description of Components
+    ```sh
+    docker-compose up -d
+    ```
 
-- **`main.py` (Application Entry Point)**: Acts as the gateway to the FastAPI application. It initializes the app instance, sets up database connections, and includes the routing configurations. This file integrates the various components of the application, ensuring seamless operation and connection flow.
+### Accessing the Application
+Once the application is running, open your web browser and go to the following URL to access the web interface:
 
-- **`schema.py` (Data Schemas)**: Defines the data validation and serialization schemas using Pydantic. These schemas ensure that incoming requests and outgoing responses adhere to the expected structure, playing a critical role in data integrity and type safety.
+- http://localhost:8501
 
-- **`routes.py` (API Routes)**: Specifies the API endpoints and associates them with their respective handler functions. This file organizes the application's endpoints into a coherent structure, facilitating clear and maintainable API design.
 
-- **`crud.py` (Database Operations)**: Implements the CRUD operations interfacing with the database. This file contains the logic to create, read, update, and delete database records, directly handling data manipulation tasks.
+## Application Structure
 
----
+- `fastapi/`: Contains FastAPI backend logic with CRUD operations for the database manager.
+  - `app/`: The main directory for FastAPI application.
+    - `crud.py`: Functions for creating, reading, updating, and deleting database entries.
+    - `main.py`: Entry point for the FastAPI application, defining the API endpoints.
+    - `routes_farmer.py`: API routes specific to farmer operations.
+    - `routes_user.py`: API routes specific to user operations.
+    - `schema.py`: Pydantic schemas for data validation.
+  - `Dockerfile`: Docker configuration for FastAPI application.
+  - `requirements.txt`: List of Python dependencies for FastAPI.
+
+- `streamlit/`: Holds the Streamlit frontend interface.
+  - `streamlit_app.py`: Main Streamlit application file, rendering the user interface.
+  - `Dockerfile`: Docker configuration for Streamlit application.
+  - `requirements.txt`: List of Python dependencies for Streamlit.
+  - `style.css`: Custom CSS styles for the Streamlit interface.
+
+- `env/`: Environment variables and configuration files.
+
+- `README.md`: Documentation and instructions for setting up and running the application (this file).
+
+- `compose.yaml`: Docker Compose file to orchestrate the multi-container setup.
+
+- `dummy_data.txt`: Sample data for testing the application.
+
+## Team Contributions
+
+- **Shruti Subramanyam**: Focused on frontend development using Streamlit, crafting the user interfaces for the web application and connecting them to backend service.
+- **Kyosuke Chikamatsu**: Concentrated on backend development, including database management and ensuring data integrity across the distributed system.
+
+## Future Work
+
+Further development can include features such as payment integration, extended user profiles, and a more detailed analytics dashboard for farmers to track sales and product performance.
+
+## Contact
+
+For any inquiries regarding the Local Food Exchange Network application, please reach out to the contributors:
+
+- Shruti Subramanyam - shrutisu@usc.edu 
+- Kyosuke Chikamatsu - chikamat@usc.edu
+
+We appreciate your interest in our project and welcome any feedback or contributions!
