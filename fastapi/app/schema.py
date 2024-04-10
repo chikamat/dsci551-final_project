@@ -29,8 +29,8 @@ class Farmer(BaseModel):
                 "contact": "XXX-YYY-ZZZZ",
                 "location": "...",
                 "product_list": {
-                    "tomato": {"inventory": 10, "price": 5, "rating": 4.3},
-                    "potato": {"inventory": 35, "price": 2, "rating": 3.2}
+                    "canned_tomato": {"inventory": 10, "price": 5, "rating": 4.3, "review_count": 12},
+                    "vegi_potato": {"inventory": 35, "price": 2, "rating": 3.2, "review_count": 21}
                 }
             }
         }
@@ -45,10 +45,10 @@ class FarmerUpdate(BaseModel):
         extra = "forbid"
         schema_extra = {
             "example": {
-                "contact": "XXX-YYY-ZZZZ",
+                "contact": "YYY-XXX-ZZZZ",
                 "location": "XXX Adams Blvd., Los Angeles, CA 90007",
                 "product_list": {
-                    "tomato": {"inventory": 12, "price": 5.5, "rating": 4.5}
+                    "canned_tomato": {"inventory": 12, "price": 5.5, "rating": 4.5, "review_count": 43}
                 }
             }
         }
