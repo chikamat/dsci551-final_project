@@ -24,8 +24,8 @@ The Local Food Exchange Network is a web-based application designed to connect l
 ### Accessing the Application
 Once the application is running, open your web browser and go to the following URL to access the web interface:
 
-- http://localhost:8501
-
+- Web application for end users (user and farmer) - http://localhost:8501
+- User itnerface for database managers (administrator) - http://localhost/docs
 
 ## Application Structure
 
