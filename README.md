@@ -27,11 +27,11 @@ Once the application is running, open your web browser and go to the following U
 - Web application for end users (user and farmer) - http://localhost:8501
 - User itnerface for database managers (administrator) - http://localhost/docs
 
-### Importing Dummy Data
-Once the application is running, you can load dummy data with the following command:
+### Importing Sample Data
+Once the application is running, you can load sample data with the following command:
 
 ```sh
-./dummy_data.sh
+./import_data.sh
 ```
 
 If you need, you can delete all data with the following command:
@@ -71,7 +71,9 @@ sudo apt-get install jq
 
 - `compose.yaml`: Docker Compose file to orchestrate the multi-container setup.
 
-- `dummy_data.txt`: Sample data for testing the application.
+- `import_data.sh`: Loading sample data for testing the application.
+
+- `clear_data.sh`: Removing all data from the database.
 
 ## Team Contributions
 
