@@ -27,6 +27,26 @@ Once the application is running, open your web browser and go to the following U
 - Web application for end users (user and farmer) - http://localhost:8501
 - User itnerface for database managers (administrator) - http://localhost/docs
 
+### Importing Dummy Data
+Once the application is running, you can load dummy data with the following command:
+
+```sh
+./dummy_data.sh
+```
+
+If you need, you can delete all data with the following command:
+
+```sh
+./clear_data.sh
+```
+
+To execute `clear_data.sh`, you may need to install jq with the following command:
+
+```sh
+sudo apt-get update
+sudo apt-get install jq
+```
+
 ## Application Structure
 
 - `fastapi/`: Contains FastAPI backend logic with CRUD operations for the database manager.
