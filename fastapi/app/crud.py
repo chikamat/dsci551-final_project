@@ -41,7 +41,9 @@ def update_farmer_db(database_list, id: str, farmer: FarmerUpdate):
     update_data = {k: v for k, v in farmer.dict().items() if v is not None}
     if 'product_list' in update_data:
         new_product_list = update_data['product_list']
-        current_product_list = current_farmer.get('product_list', {})
+        current_product_list = current_farmer.get('product_list')
+        if current_product_list is None:
+            current_product_list = dict()
         for product_name, product_info in new_product_list.items():
             current_product_list[product_name] = product_info
         update_data['product_list'] = current_product_list
