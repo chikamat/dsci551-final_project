@@ -1,0 +1,132 @@
+import streamlit as st
+import pandas as pd
+import requests
+import json
+
+
+def show_products():
+    res = requests.get(url + st.session_state['your_id'])
+    product_list = res.json()['product_list']
+    if product_list is not None:
+        st.session_state['products'] = pd.DataFrame([
+            {
+                'Category': k.split('_')[0],
+                'Product': k.split('_')[1],
+                'Price': v.get('price'),
+                'Inventory': v.get('inventory')
+            }
+            for k, v in product_list.items()
+        ])
+
+
+def dataframe_with_selections(df):
+    df_with_selections = df.copy()
+    df_with_selections["Select to Delete"] = False
+
+    # Get dataframe row-selections from user with st.data_editor
+    edited_df = st.data_editor(
+        df_with_selections,
+        hide_index=True,
+        column_config={"Select to Delete": st.column_config.CheckboxColumn(required=True)},
+        disabled=['Category', 'Product']
+    )
+
+    return edited_df
+
+
+def update_products(df):
+    body = {"product_list": {r.Category + "_" + r.Product: {"inventory": r.Inventory, "price": r.Price} for i, r in df.iterrows()}}
+    res = requests.patch(url + st.session_state['your_id'], data=json.dumps(body))
+    product_list = res.json()['product_list']
+    print(product_list)
+    if product_list is not None:
+        st.session_state['products'] = pd.DataFrame([
+            {
+                'Category': k.split('_')[0],
+                'Product': k.split('_')[1],
+                'Price': v.get('price'),
+                'Inventory': v.get('inventory')
+            }
+            for k, v in product_list.items()
+        ])
+
+
+def delete_products(df):
+    for i, r in df.iterrows():
+        res = requests.delete(f"{url}{st.session_state['your_id']}/product_list/{r.Category}_{r.Product}")
+    show_products()
+
+
+url = 'http://back:80/farmer/'
+if 'your_id' not in st.session_state:
+    st.session_state['your_id'] = ''
+if 'products' not in st.session_state:
+    st.session_state['products'] = pd.DataFrame(columns=['Category', 'Product', 'Price', 'Inventory'])
+
+st.write('# Farmer Page🌾')
+
+st.write("### Login")
+with st.expander("Clike Here to Login / Sign Up"):
+    with st.popover("Set your ID here"):
+        st.session_state['your_id'] = st.text_input("What's your ID?", st.session_state['your_id'])
+    st.markdown('Are you a new farmer? &nbsp; Please create your ID!')
+    with st.form("sign_up_form", clear_on_submit=True):
+        name = st.text_input("Name")
+        phone_number = st.text_input("Phone Number")
+        location = st.text_input("Location")
+        submit_button = st.form_submit_button("Submit")
+        if submit_button:
+            body = {'name': name, 'contact': phone_number, 'location': location}
+            res = requests.post(url, data=json.dumps(body))
+            st.session_state['your_id'] = res.json()['_id']
+            st.success(f"Successfully sign up and login. Your ID is: {st.session_state['your_id']}")
+st.write("Your ID: ", f":blue[{st.session_state['your_id']}]")
+
+st.write("### Add Products")
+with st.expander("Click Here to Add Products"):
+    # with st.popover("Select Category"):
+    category = st.selectbox("Select Category", ["", "Vegetables", "Fruits", "Frozen", "Canned"])
+    if category == "Vegetables":
+        products = ["Tomato", "Potato", "Onion", "Carrot", "Lettuce"]
+    elif category == "Fruits":
+        products = ["Apple", "Banana", "Orange", "Blueberry"]
+    elif category == "Frozen":
+        products = ["Orange", "Blueberry", "Mango", "Peas", "Broccoli"]
+    elif category == "Canned":
+        products = ["Grapefruit", "Peaches", "Mandarins", "Corn", "Tomato", "Peas"]
+    else:
+        products = []
+    # st.write("Category: ", f":green[{category}]")
+    # with st.form("add_products_form", clear_on_submit=True):
+    product = st.selectbox("Select Product", products)
+    price = st.number_input("Price per unit", min_value=0.01)
+    quantity = st.number_input("Inventory", min_value=1)
+    add_button = st.button("Add Product")
+    if add_button:
+        body = {
+            "product_list": {
+                f'{category}_{product}': {
+                    "inventory": quantity,
+                    "price": price
+                }
+            }
+        }
+        res = requests.patch(url + st.session_state['your_id'], data=json.dumps(body))
+        if res.status_code == 200:
+            st.success(f"Product added successfully.")
+        else:
+            st.error("Error!! Product could not be added")
+
+st.write("### Your Product List")
+st.button('Show', on_click=show_products)
+st.dataframe(st.session_state['products'], hide_index=True)
+
+with st.expander("Manage Your Products"):
+    edited_df = dataframe_with_selections(st.session_state['products'])
+    selected_rows = edited_df[edited_df['Select to Delete']]
+    selected_rows.drop('Select to Delete', axis=1)
+    col1, col2, col3 = st.columns([0.13, 0.13, 0.74])
+    with col1:
+        st.button('Update', on_click=update_products, args=[edited_df])
+    with col2:
+        st.button('Delete', on_click=delete_products, args=[selected_rows])
