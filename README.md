@@ -60,10 +60,17 @@ sudo apt-get install jq
   - `requirements.txt`: List of Python dependencies for FastAPI.
 
 - `streamlit/`: Holds the Streamlit frontend interface.
+  - `pages/`: The main directory for Streamlit application.
+    - `1_Farmer`: Contains frontend code for the farmer page.
+    - `2_User`: Contains frontend code for the User page.
+    - `3_Products`: Contains frontend code to display list of all the products.
+    - `4_Contact_Us`: Contains frontend code for Contact Us page.
+  - `Welcome.py/`: Contains frontend of the main page of the local food exchange application.
   - `streamlit_app.py`: Main Streamlit application file, rendering the user interface.
   - `Dockerfile`: Docker configuration for Streamlit application.
   - `requirements.txt`: List of Python dependencies for Streamlit.
   - `style.css`: Custom CSS styles for the Streamlit interface.
+  - `logo.png`: Image of the logo which is displayed in the frontend.
 
 - `env/`: Environment variables and configuration files.
 
