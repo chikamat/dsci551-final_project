@@ -12,7 +12,7 @@ contact_form = """
      <input type="hidden" name="_captcha" value="false">
      <input type="text" name="name" placeholder="Name" required>
      <input type="email" name="email" placeholder="Email" required>
-     <input type="text" name="email" placeholder="Phone No." required>
+     <input type="text" name="phone" placeholder="Phone No." required>
      <textarea name="message" placeholder="Enquiry"></textarea>
      <div style="text-align: left;">
         <button type="submit">Send</button>

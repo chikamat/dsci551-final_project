@@ -76,10 +76,16 @@ with st.expander("Clike Here to Login / Sign Up"):
         location = st.text_input("Location")
         submit_button = st.form_submit_button("Submit")
         if submit_button:
-            body = {'name': name, 'contact': phone_number, 'location': location}
-            res = requests.post(url, data=json.dumps(body))
-            st.session_state['your_id'] = res.json()['_id']
-            st.success(f"Successfully sign up and login. Your ID is: {st.session_state['your_id']}")
+            if not name or not phone_number or not location:
+                st.error("Please fill out all fields before submitting.")
+            else:
+                body = {'name': name, 'contact': phone_number, 'location': location}
+                res = requests.post(url, data=json.dumps(body))
+                if res.ok:
+                    st.session_state['your_id'] = res.json()['_id']
+                    st.success(f"Successfully sign up and login. Your ID is: {st.session_state['your_id']}")
+                else:
+                    st.error("Failed to sign up. Please try again.")
 st.write("Your ID: ", f":blue[{st.session_state['your_id']}]")
 
 st.write("### Add Products")
@@ -99,23 +105,26 @@ with st.expander("Click Here to Add Products"):
     # st.write("Category: ", f":green[{category}]")
     # with st.form("add_products_form", clear_on_submit=True):
     product = st.selectbox("Select Product", products)
-    price = st.number_input("Price per unit", min_value=0.01)
-    quantity = st.number_input("Inventory", min_value=1)
+    price = st.number_input("Price per unit", min_value=0.00)
+    quantity = st.number_input("Inventory", min_value=0)
     add_button = st.button("Add Product")
     if add_button:
-        body = {
-            "product_list": {
-                f'{category}_{product}': {
-                    "inventory": quantity,
-                    "price": price
-                }
-            }
-        }
-        res = requests.patch(url + st.session_state['your_id'], data=json.dumps(body))
-        if res.status_code == 200:
-            st.success(f"Product added successfully.")
+        if not category or not product or price <= 0 or quantity < 1:
+            st.error("Please fill in all fields correctly before adding a product.")
         else:
-            st.error("Error!! Product could not be added")
+            body = {
+                "product_list": {
+                    f'{category}_{product}': {
+                        "inventory": quantity,
+                        "price": price
+                    }
+             }
+            }
+            res = requests.patch(url + st.session_state['your_id'], data=json.dumps(body))
+            if res.status_code == 200:
+                st.success(f"Product added successfully.")
+            else:
+                st.error("Error!! Product could not be added")
 
 st.write("### Your Product List")
 st.button('Show', on_click=show_products)
