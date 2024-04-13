@@ -58,8 +58,7 @@ sudo apt-get install jq
 - `Edge cases`: We have handled below mentioned edge cases in our application.
   - Empty information is not acceptable for all the buttons e.g. if the button is clicked without any data it gives an error message.
   - In the farmer page: The farmer cannot add duplicate products.
-  - In the user page: The user can not add products more than inventory to cart, if they add error message will be displayed.
-  - In the user page: The user cannot add negative product quantity, an error message will be displayed in such cases.
+  - In the user page: The user can not add products more than inventory to cart or add negative product quantity, if they do an error message will be displayed in such cases.
   - All the buttons will be locked unless the user finishes the current task e.g. only after check out user can write a review.
 
 ## Application Structure
