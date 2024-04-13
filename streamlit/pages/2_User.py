@@ -111,7 +111,7 @@ edited_df = dataframe_with_numbers(st.session_state['results'])
 selected_rows = edited_df[edited_df['Add to Cart'] > 0]
 total_price = 0
 if (edited_df['Add to Cart'] < 0).any():
-    st.error('You cannot less than 0!')
+    st.error('You cannot buy products less than 0!')
     st.session_state.disable_co = True
 elif (edited_df['Add to Cart'] > edited_df['Inventory']).any():
     st.error('You cannot buy more than inventory!')
