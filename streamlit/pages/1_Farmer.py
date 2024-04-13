@@ -118,7 +118,7 @@ with st.expander("Click Here to Add Products"):
                         "inventory": quantity,
                         "price": price
                     }
-             }
+                }
             }
             res = requests.patch(url + st.session_state['your_id'], data=json.dumps(body))
             if res.status_code == 200:
