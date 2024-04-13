@@ -4,6 +4,16 @@ import requests
 import json
 
 
+def check_user_id(id):
+    res = requests.get(url + id)
+    if res.ok:
+        st.session_state.disable_button = False or st.session_state.your_id == ''
+        return True
+    else:
+        st.session_state.disable_button = True or st.session_state.your_id == ''
+        return False
+
+
 def show_products():
     res = requests.get(url + st.session_state['your_id'])
     product_list = res.json()['product_list']
@@ -62,6 +72,8 @@ if 'your_id' not in st.session_state:
     st.session_state['your_id'] = ''
 if 'products' not in st.session_state:
     st.session_state['products'] = pd.DataFrame(columns=['Category', 'Product', 'Price', 'Inventory'])
+if 'disable_button' not in st.session_state:
+    st.session_state['disable_button'] = True
 
 st.write('# Farmer Page🌾')
 
@@ -87,6 +99,12 @@ with st.expander("Clike Here to Login / Sign Up"):
                 else:
                     st.error("Failed to sign up. Please try again.")
 st.write("Your ID: ", f":blue[{st.session_state['your_id']}]")
+if st.session_state['your_id'] == '':
+    pass
+elif check_user_id(st.session_state['your_id']):
+    st.success('Valid ID')
+else:
+    st.error('Invalid ID')
 
 st.write("### Add Products")
 with st.expander("Click Here to Add Products"):
@@ -127,7 +145,7 @@ with st.expander("Click Here to Add Products"):
                 st.error("Error!! Product could not be added")
 
 st.write("### Your Product List")
-st.button('Show', on_click=show_products)
+st.button('Show', on_click=show_products, disabled=st.session_state.disable_button)
 st.dataframe(st.session_state['products'], hide_index=True)
 
 with st.expander("Manage Your Products"):
@@ -136,6 +154,6 @@ with st.expander("Manage Your Products"):
     selected_rows.drop('Select to Delete', axis=1)
     col1, col2, col3 = st.columns([0.13, 0.13, 0.74])
     with col1:
-        st.button('Update', on_click=update_products, args=[edited_df])
+        st.button('Update', on_click=update_products, args=[edited_df], disabled=st.session_state.disable_button)
     with col2:
-        st.button('Delete', on_click=delete_products, args=[selected_rows])
+        st.button('Delete', on_click=delete_products, args=[selected_rows], disabled=st.session_state.disable_button)
