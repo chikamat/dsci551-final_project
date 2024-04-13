@@ -25,6 +25,7 @@ def search_results(category, product):
                 })
         st.session_state['results'] = pd.DataFrame(data)
         st.session_state.button = False
+        st.session_state.disable_co = True
 
 
 
@@ -51,6 +52,7 @@ def checkout(df):
         q = r['Add to Cart']
         res = requests.patch(url + f"purchase/{id}/{product_name}", data=json.dumps({"quantity": q}))
     st.session_state.button = True
+    st.session_state.disable_co = True
     st.session_state.button2 = False
 
 
@@ -86,6 +88,8 @@ if 'button' not in st.session_state:
     st.session_state.button = False
 if 'button2' not in st.session_state:
     st.session_state.button2 = True
+if 'disable_co' not in st.session_state:
+    st.session_state.disable_co = True
 
 st.write('# User Page🛒')
 
@@ -104,18 +108,25 @@ else:
 product = st.selectbox("Select Product", products)
 st.button("Search Products", on_click=search_results, args=[category, product])
 edited_df = dataframe_with_numbers(st.session_state['results'])
+selected_rows = edited_df[edited_df['Add to Cart'] > 0]
 total_price = 0
+if (edited_df['Add to Cart'] < 0).any():
+    st.error('You cannot less than 0!')
+    st.session_state.disable_co = True
+elif (edited_df['Add to Cart'] > edited_df['Inventory']).any():
+    st.error('You cannot buy more than inventory!')
+    st.session_state.disable_co = True
+elif len(selected_rows) > 0:
+    st.session_state.disable_co = False
+
 for i, r in edited_df.iterrows():
     q = r['Add to Cart']
-    if q > r.Inventory:
-        st.error('You cannot buy more than inventory!')
     total_price += r.Price * q
 
 with st.expander("Your Cart"):
-    selected_rows = edited_df[edited_df['Add to Cart'] > 0]
     st.dataframe(selected_rows, hide_index=True, column_order=("Farmer's Name", "Contact", "Review", "Price", "Inventory", "Add to Cart"))
     st.write(f'**Total Price**: :blue[${total_price}]')
-    st.button('Checkout', on_click=checkout, args=[selected_rows], disabled=st.session_state.button)
+    st.button('Checkout', on_click=checkout, args=[selected_rows], disabled=(st.session_state.disable_co or st.session_state.button))
     if st.session_state.button:
         st.success('Thank you for your purchasing! &nbsp; You can review the products below.')
         review_df = dataframe_with_review(selected_rows)
