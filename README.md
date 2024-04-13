@@ -54,7 +54,7 @@ sudo apt-get install jq
 
 ## Uniqueness:
 - `feature`: Unique feature that we added in our application.
-  - `Contact Us Page`:  Users can contact us if they have any issues/queries, the database manager will get an email regrading the query.
+  - Contact Us Page:  Users can contact us if they have any issues/queries, the database manager will get an email regrading the query.
 - `Edge cases`: We have handled below mentioned edge cases in our application.
   - Empty information is not acceptable for all the buttons e.g. if the button is clicked without any data it gives an error message.
   - In the farmer page: The farmer cannot add duplicate products.
