@@ -14,6 +14,19 @@ def check_user_id(id):
         return False
 
 
+def add_product(cat, pro, qua, pri):
+    bdy = {
+        "product_list": {
+            f'{cat}_{pro}': {
+                "inventory": qua,
+                "price": pri
+            }
+        }
+    }
+    res = requests.patch(url + st.session_state['your_id'], data=json.dumps(bdy))
+    return res.status_code == 200
+
+
 def show_products():
     res = requests.get(url + st.session_state['your_id'])
     product_list = res.json()['product_list']
@@ -27,6 +40,8 @@ def show_products():
             }
             for k, v in product_list.items()
         ])
+    else:
+        st.session_state['products'] = pd.DataFrame(columns=['Category', 'Product', 'Price', 'Inventory'])
 
 
 def dataframe_with_selections(df):
@@ -45,10 +60,11 @@ def dataframe_with_selections(df):
 
 
 def update_products(df):
+    if len(df) == 0:
+        return
     body = {"product_list": {r.Category + "_" + r.Product: {"inventory": r.Inventory, "price": r.Price} for i, r in df.iterrows()}}
     res = requests.patch(url + st.session_state['your_id'], data=json.dumps(body))
     product_list = res.json()['product_list']
-    print(product_list)
     if product_list is not None:
         st.session_state['products'] = pd.DataFrame([
             {
@@ -62,6 +78,8 @@ def update_products(df):
 
 
 def delete_products(df):
+    if len(df) == 0:
+        return
     for i, r in df.iterrows():
         res = requests.delete(f"{url}{st.session_state['your_id']}/product_list/{r.Category}_{r.Product}")
     show_products()
@@ -125,24 +143,27 @@ with st.expander("Click Here to Add Products"):
     product = st.selectbox("Select Product", products)
     price = st.number_input("Price per unit", min_value=0.00)
     quantity = st.number_input("Inventory", min_value=0)
-    add_button = st.button("Add Product")
+    add_button = st.button("Add Product", disabled=st.session_state.disable_button)
     if add_button:
+        current_product_list = requests.get(url + st.session_state['your_id']).json()['product_list']
         if not category or not product or price <= 0 or quantity < 1:
             st.error("Please fill in all fields correctly before adding a product.")
         else:
-            body = {
-                "product_list": {
-                    f'{category}_{product}': {
-                        "inventory": quantity,
-                        "price": price
-                    }
-                }
-            }
-            res = requests.patch(url + st.session_state['your_id'], data=json.dumps(body))
-            if res.status_code == 200:
-                st.success(f"Product added successfully.")
+            if current_product_list is not None:
+                if f'{category}_{product}' in current_product_list:
+                    st.error("You are trying to add a product which you already have.")
+                else:
+                    res_add = add_product(category, product, quantity, price)
+                    if res_add:
+                        st.success(f"Product added successfully.")
+                    else:
+                        st.error("Error!! Product could not be added")
             else:
-                st.error("Error!! Product could not be added")
+                res_add = add_product(category, product, quantity, price)
+                if res_add:
+                    st.success(f"Product added successfully.")
+                else:
+                    st.error("Error!! Product could not be added")
 
 st.write("### Your Product List")
 st.button('Show', on_click=show_products, disabled=st.session_state.disable_button)
