@@ -4,6 +4,11 @@
 
 The Local Food Exchange Network is a web-based application designed to connect local farmers with customers to facilitate the discovery and purchase of locally sourced food products. Developed as part of the DSCI551 Spring 2024 coursework at USC, this project implements a distributed database that stores data across two NoSQL systems, managed by a hash function.
 
+## Team Contributions
+
+- **Shruti Subramanyam**: Focused on frontend development using Streamlit, crafting the user interfaces for the web application and connecting them to backend service.
+- **Kyosuke Chikamatsu**: Concentrated on backend development, including database management and ensuring data integrity across the distributed system.
+
 ## Getting Started
 
 ### Prerequisites
@@ -47,6 +52,15 @@ sudo apt-get update
 sudo apt-get install jq
 ```
 
+## Uniqueness:
+- `features`: Unique feature that we added in our application.
+  - Contact Us Page:  Users can contact us if they have any issues/queries, the database manager will get an email regrading the query.
+- `Edge cases`: We have handled below mentioned edge cases in our application.
+  - Empty information is not acceptable for all the buttons e.g. if the button is clicked without any data it gives an error message.
+  - In the farmer page: The farmer cannot add duplicate products.
+  - In the user page: The user can not add products more than inventory to cart or add negative product quantity, if they do an error message will be displayed in such cases.
+  - All the buttons will be locked unless the user finishes the current task e.g. only after check out user can write a review.
+
 ## Application Structure
 
 - `fastapi/`: Contains FastAPI backend logic with CRUD operations for the database manager.
@@ -81,11 +95,6 @@ sudo apt-get install jq
 - `import_data.sh`: Loading sample data for testing the application.
 
 - `clear_data.sh`: Removing all data from the database.
-
-## Team Contributions
-
-- **Shruti Subramanyam**: Focused on frontend development using Streamlit, crafting the user interfaces for the web application and connecting them to backend service.
-- **Kyosuke Chikamatsu**: Concentrated on backend development, including database management and ensuring data integrity across the distributed system.
 
 ## Future Work
 
