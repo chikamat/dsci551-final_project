@@ -26,11 +26,10 @@ class Farmer(BaseModel):
         schema_extra = {
             "example": {
                 "name": "John Smith",
-                "contact": "XXX-YYY-ZZZZ",
+                "contact": "000-000-0000",
                 "location": "...",
                 "product_list": {
-                    "canned_tomato": {"inventory": 10, "price": 5, "rating": 4.3, "review_count": 12},
-                    "vegi_potato": {"inventory": 35, "price": 2, "rating": 3.2, "review_count": 21}
+                    "Canned_Tomato": {"inventory": 10, "price": 5, "rating": 4.3, "review_count": 12}
                 }
             }
         }
@@ -45,10 +44,10 @@ class FarmerUpdate(BaseModel):
         extra = "forbid"
         schema_extra = {
             "example": {
-                "contact": "YYY-XXX-ZZZZ",
-                "location": "XXX Adams Blvd., Los Angeles, CA 90007",
+                "contact": "000-000-0000",
+                "location": "...",
                 "product_list": {
-                    "canned_tomato": {"inventory": 12, "price": 5.5, "rating": 4.5, "review_count": 43}
+                    "Canned_Tomato": {"inventory": 10, "price": 5, "rating": 4.3, "review_count": 12}
                 }
             }
         }
